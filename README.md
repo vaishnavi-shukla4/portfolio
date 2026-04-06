@@ -1,6 +1,8 @@
-#Portfolio
+# Portfolio
 
-Live Demo: https://my-portfolio-nine-self-70.vercel.app/
+🔗 Live Demo: https://my-portfolio-nine-self-70.vercel.app/
+
+Personal portfolio website built using React and Vite.
 
 # React + Vite
 
