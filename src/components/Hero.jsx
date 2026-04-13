@@ -9,7 +9,6 @@ const ROLES = [
   'Software Engineer',
   'ML Enthusiast',
   'Full-Stack Developer',
-  'AI Builder',
   'Problem Solver',
 ];
 
