@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useActiveSection } from '../hooks/useActiveSection';
 
-const SECTIONS = ['home', 'about', 'projects', 'education', 'contact'];
+const SECTIONS = ['home', 'about', 'skills', 'projects', 'education', 'contact'];
 const NAV_LABELS = {
   home: 'Home',
   about: 'About',
+  skills: 'Skills',
   projects: 'Projects',
   education: 'Education',
   contact: 'Contact',

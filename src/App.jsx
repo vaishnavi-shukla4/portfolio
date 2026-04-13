@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 
 // Lazy-load below-the-fold sections for performance
 const About     = lazy(() => import('./components/About'));
+const Skills    = lazy(() => import('./components/Skills'));
 const Projects  = lazy(() => import('./components/Projects'));
 const Education = lazy(() => import('./components/Education'));
 const Contact   = lazy(() => import('./components/Contact'));
@@ -38,6 +39,10 @@ export default function App() {
 
         <Suspense fallback={<SectionSkeleton />}>
           <About />
+        </Suspense>
+
+        <Suspense fallback={<SectionSkeleton />}>
+          <Skills />
         </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>
