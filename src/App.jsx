@@ -4,44 +4,53 @@ import Hero from './components/Hero';
 import Footer from './components/Footer';
 
 // Lazy-load below-the-fold sections for performance
+const Quote     = lazy(() => import('./components/Quote'));
 const About     = lazy(() => import('./components/About'));
 const Skills    = lazy(() => import('./components/Skills'));
 const Projects  = lazy(() => import('./components/Projects'));
 const Education = lazy(() => import('./components/Education'));
 const Contact   = lazy(() => import('./components/Contact'));
 
-/** Lightweight section skeleton while lazy chunk loads */
+/** Section skeleton – minimal spinner for lazy-load fallback */
 function SectionSkeleton() {
   return (
-    <div className="py-28 flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
+    <div className="py-32 flex items-center justify-center" style={{ background: '#fff7ec' }}>
+      <div
+        className="w-7 h-7 border-2 rounded-full animate-spin"
+        style={{ borderColor: 'rgba(245,203,215,0.3)', borderTopColor: '#442f2a' }}
+      />
     </div>
   );
 }
 
 /**
- * App – root shell. Navbar + each section in order.
- * Below-the-fold sections are lazily loaded for performance.
+ * App – root shell.
+ * Section order: Hero → Quote → About → Skills → Projects → Education → Contact → Footer
  */
 export default function App() {
   return (
-    <div className="min-h-screen bg-navy-950 text-slate-200 relative">
+    <div className="min-h-screen relative" style={{ background: '#fff7ec', color: '#442f2a' }}>
       {/* Subtle noise texture overlay */}
       <div className="noise-overlay" aria-hidden="true" />
 
       {/* Navigation */}
       <Navbar />
 
-      {/* Main content – semantic landmark */}
+      {/* Main content */}
       <main id="main-content">
         {/* Hero loads immediately (above the fold) */}
         <Hero />
+
+        {/* Quote – dark interlude after hero */}
+        <Suspense fallback={<div className="py-32" style={{ background: '#070d0d' }} />}>
+          <Quote />
+        </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>
           <About />
         </Suspense>
 
-        <Suspense fallback={<SectionSkeleton />}>
+        <Suspense fallback={<div className="py-32" style={{ background: '#070d0d' }} />}>
           <Skills />
         </Suspense>
 
@@ -49,7 +58,7 @@ export default function App() {
           <Projects />
         </Suspense>
 
-        <Suspense fallback={<SectionSkeleton />}>
+        <Suspense fallback={<div className="py-32" style={{ background: '#070d0d' }} />}>
           <Education />
         </Suspense>
 

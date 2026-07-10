@@ -6,7 +6,7 @@ export const fadeUp = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -14,34 +14,53 @@ export const fadeIn = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.5, ease: 'easeOut' },
+    transition: { duration: 0.6, ease: 'easeOut' },
+  },
+};
+
+export const fadeDown = {
+  hidden: { opacity: 0, y: -30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 export const slideLeft = {
-  hidden: { opacity: 0, x: -50 },
+  hidden: { opacity: 0, x: -60 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 export const slideRight = {
-  hidden: { opacity: 0, x: 50 },
+  hidden: { opacity: 0, x: 60 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 export const scaleIn = {
-  hidden: { opacity: 0, scale: 0.85 },
+  hidden: { opacity: 0, scale: 0.88 },
   visible: {
     opacity: 1,
     scale: 1,
     transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+export const revealText = {
+  hidden: { opacity: 0, y: 20, filter: 'blur(4px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -51,19 +70,41 @@ export const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.1,
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
     },
   },
 };
 
 // Child item for stagger
 export const staggerItem = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
     transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+// Faster stagger for chips/pills
+export const fastStagger = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+export const fastStaggerItem = {
+  hidden: { opacity: 0, scale: 0.85, y: 10 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
   },
 };
 

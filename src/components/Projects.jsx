@@ -1,41 +1,30 @@
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import { ExternalLink, ArrowRight } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import GithubIcon from './icons/GithubIcon';
 import { projects } from '../data/portfolioData';
 import { fadeUp, staggerContainer, staggerItem } from '../utils/animations';
 
-const COLOR_CONFIG = {
-  violet: {
-    icon: 'bg-violet-500/15 border-violet-500/30',
-    badge: 'bg-violet-500/10 border-violet-500/25 text-violet-300',
-    accent: 'from-violet-500/20 to-transparent',
-    glow: 'hover:shadow-[0_8px_40px_rgba(124,58,237,0.3)]',
-    tag: 'border-violet-500/40 text-violet-400',
-    number: 'text-violet-500/30',
+/** Project gradient backgrounds for visual variety */
+const PROJECT_VISUALS = [
+  {
+    bg: 'linear-gradient(135deg, #442f2a 0%, #6b4c45 50%, #2d1f1b 100%)',
+    pattern: '🤖 AI · NLP · LLM',
   },
-  cyan: {
-    icon: 'bg-cyan-500/15 border-cyan-500/30',
-    badge: 'bg-cyan-500/10 border-cyan-500/25 text-cyan-300',
-    accent: 'from-cyan-500/20 to-transparent',
-    glow: 'hover:shadow-[0_8px_40px_rgba(6,182,212,0.3)]',
-    tag: 'border-cyan-500/40 text-cyan-400',
-    number: 'text-cyan-500/30',
+  {
+    bg: 'linear-gradient(135deg, #0f1a1a 0%, #1a3030 50%, #0a2020 100%)',
+    pattern: '📚 RAG · Embeddings · PDF',
   },
-  pink: {
-    icon: 'bg-pink-500/15 border-pink-500/30',
-    badge: 'bg-pink-500/10 border-pink-500/25 text-pink-300',
-    accent: 'from-pink-500/20 to-transparent',
-    glow: 'hover:shadow-[0_8px_40px_rgba(244,114,182,0.3)]',
-    tag: 'border-pink-500/40 text-pink-400',
-    number: 'text-pink-500/30',
+  {
+    bg: 'linear-gradient(135deg, #1a1a0f 0%, #2a2a10 50%, #442f2a 100%)',
+    pattern: '🌿 CNN · IoT · Weather',
   },
-};
+];
 
 /** Single project card */
 function ProjectCard({ project, index }) {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 });
-  const c = COLOR_CONFIG[project.color];
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  const visual = PROJECT_VISUALS[index % PROJECT_VISUALS.length];
 
   return (
     <motion.article
@@ -43,65 +32,113 @@ function ProjectCard({ project, index }) {
       variants={staggerItem}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
-      whileHover={{ y: -8 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-      className={`glass-card relative overflow-hidden flex flex-col transition-shadow duration-300 ${c.glow}`}
+      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+      className="card-light flex flex-col overflow-hidden group"
       aria-label={`Project: ${project.title}`}
+      style={{ borderRadius: 24 }}
     >
-      {/* Top gradient accent stripe */}
-      <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${c.accent} via-current`} />
-
-      {/* Large faded project number */}
-      <span
-        className={`absolute top-4 right-5 font-mono text-6xl font-black select-none pointer-events-none ${c.number}`}
-        aria-hidden="true"
+      {/* Project visual header */}
+      <div
+        className="relative h-48 overflow-hidden flex-shrink-0"
+        style={{ background: visual.bg }}
       >
-        {String(index + 1).padStart(2, '0')}
-      </span>
-
-      <div className="p-7 flex flex-col flex-1 gap-5">
-        {/* Icon + title */}
-        <div className="flex items-start gap-4">
+        {/* Decorative pattern text */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          aria-hidden="true"
+        >
           <div
-            className={`w-12 h-12 rounded-xl border flex items-center justify-center text-2xl flex-shrink-0 ${c.icon}`}
-            aria-hidden="true"
+            className="text-center select-none"
+            style={{ color: 'rgba(255,247,236,0.12)', fontSize: '0.7rem', letterSpacing: '0.3em' }}
           >
-            {project.icon}
-          </div>
-          <div className="flex-1 min-w-0 pr-10">
-            <h3 className="font-bold text-white text-lg leading-tight mb-1">
-              {project.title}
-            </h3>
-            <p className={`text-xs font-medium border rounded-md px-2 py-0.5 inline-block ${c.tag}`}>
-              {project.subtitle}
-            </p>
+            {Array.from({ length: 20 }).map((_, i) => (
+              <p key={i} className="font-mono">
+                {visual.pattern}
+              </p>
+            ))}
           </div>
         </div>
 
-        {/* Description */}
-        <p className="text-slate-400 text-sm leading-relaxed flex-1">
+        {/* Big emoji icon centered */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl transition-transform duration-300 group-hover:scale-110"
+            style={{ background: 'rgba(255,247,236,0.12)', backdropFilter: 'blur(8px)' }}
+          >
+            {project.icon}
+          </div>
+        </div>
+
+        {/* Index number */}
+        <span
+          className="absolute top-4 right-5 font-mono font-black select-none pointer-events-none"
+          style={{ fontSize: '5rem', color: 'rgba(255,247,236,0.06)', lineHeight: 1 }}
+          aria-hidden="true"
+        >
+          {String(index + 1).padStart(2, '0')}
+        </span>
+      </div>
+
+      {/* Card body */}
+      <div className="p-7 flex flex-col flex-1 gap-4">
+        <div>
+          <h3
+            className="font-semibold text-lg mb-1 leading-tight"
+            style={{ color: '#442f2a' }}
+          >
+            {project.title}
+          </h3>
+          <p
+            className="text-xs font-medium"
+            style={{ color: 'rgba(68,47,42,0.45)' }}
+          >
+            {project.subtitle}
+          </p>
+        </div>
+
+        <p
+          className="text-sm leading-relaxed flex-1"
+          style={{ color: 'rgba(68,47,42,0.65)' }}
+        >
           {project.description}
         </p>
 
         {/* Tech stack */}
-        <div className="flex flex-wrap gap-2">
-          {project.tech.map((t) => (
+        <div className="flex flex-wrap gap-1.5">
+          {project.tech.slice(0, 6).map((t) => (
             <span
               key={t}
-              className="px-2.5 py-1 rounded-md bg-navy-800 border border-white/5 text-slate-400 text-xs font-mono"
+              className="px-2.5 py-1 rounded-md text-xs font-mono font-medium"
+              style={{
+                background: 'rgba(68,47,42,0.06)',
+                color: 'rgba(68,47,42,0.65)',
+                border: '1px solid rgba(68,47,42,0.08)',
+              }}
             >
               {t}
             </span>
           ))}
+          {project.tech.length > 6 && (
+            <span
+              className="px-2.5 py-1 rounded-md text-xs font-mono"
+              style={{ color: 'rgba(68,47,42,0.4)' }}
+            >
+              +{project.tech.length - 6} more
+            </span>
+          )}
         </div>
 
         {/* Links */}
-        <div className="flex items-center gap-3 pt-2 border-t border-white/5">
+        <div
+          className="flex items-center gap-3 pt-3"
+          style={{ borderTop: '1px solid rgba(68,47,42,0.06)' }}
+        >
           <a
             href={project.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-violet-400 transition-colors font-medium"
+            className="flex items-center gap-1.5 text-sm font-medium transition-all duration-200 hover:scale-105"
+            style={{ color: '#442f2a' }}
             aria-label={`View ${project.title} on GitHub`}
           >
             <GithubIcon size={15} />
@@ -112,31 +149,34 @@ function ProjectCard({ project, index }) {
               href={project.live}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-cyan-400 transition-colors font-medium"
-              aria-label={`View ${project.title} live demo`}
+              className="flex items-center gap-1.5 text-sm font-medium transition-all duration-200 hover:scale-105"
+              style={{ color: 'rgba(68,47,42,0.6)' }}
+              aria-label={`Live demo for ${project.title}`}
             >
               <ExternalLink size={15} />
               Live Demo
             </a>
           ) : (
-            <span className="flex items-center gap-1.5 text-sm text-slate-600 cursor-not-allowed select-none">
-              <ExternalLink size={15} />
+            <span
+              className="flex items-center gap-1.5 text-xs"
+              style={{ color: 'rgba(68,47,42,0.3)' }}
+            >
+              <ExternalLink size={13} />
               Demo Soon
             </span>
           )}
 
-          <span className="ml-auto">
-            <motion.a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ x: 4 }}
-              className="flex items-center gap-1 text-xs text-slate-500 hover:text-violet-400 transition-colors"
-              aria-label={`Explore ${project.title}`}
-            >
-              Explore <ArrowRight size={12} />
-            </motion.a>
-          </span>
+          <motion.a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ x: 4 }}
+            className="ml-auto text-xs font-medium transition-colors"
+            style={{ color: 'rgba(68,47,42,0.35)' }}
+            aria-label={`Explore ${project.title}`}
+          >
+            Explore →
+          </motion.a>
         </div>
       </div>
     </motion.article>
@@ -144,17 +184,21 @@ function ProjectCard({ project, index }) {
 }
 
 /**
- * Projects – featured project cards in a responsive 3-column grid.
+ * Projects – cream background, editorial card grid with project visuals.
  */
 export default function Projects() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.05 });
 
   return (
-    <section id="projects" className="py-28 relative">
-      {/* bg orb */}
+    <section
+      id="projects"
+      className="relative py-28 md:py-36 overflow-hidden"
+      style={{ background: '#fff7ec' }}
+    >
+      {/* Decorative blob */}
       <div
-        className="glow-orb w-[400px] h-[400px] left-[-150px] top-1/3 opacity-10"
-        style={{ background: 'radial-gradient(circle, #06b6d4, transparent 70%)' }}
+        className="absolute bottom-[-10%] left-[-5%] w-96 h-96 rounded-full pointer-events-none opacity-20"
+        style={{ background: 'radial-gradient(circle, #f5cbd7, transparent 70%)' }}
         aria-hidden="true"
       />
 
@@ -165,30 +209,73 @@ export default function Projects() {
           variants={fadeUp}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="text-center mb-16"
+          className="mb-16 md:mb-20"
         >
-          <p className="font-mono text-cyan-400 text-sm tracking-widest uppercase mb-3">
+          <p
+            className="section-label mb-3"
+            style={{ color: 'rgba(68,47,42,0.45)' }}
+          >
             What I've built
           </p>
-          <h2 className="section-title text-white">
-            Featured <span className="gradient-text">Projects</span>
-          </h2>
-          <p className="section-subtitle mt-4 max-w-xl mx-auto">
-            End-to-end systems spanning AI, full-stack, and data science — each
-            solving a real problem.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <h2
+              className="font-serif"
+              style={{
+                fontSize: 'clamp(2.8rem, 6vw, 5rem)',
+                fontWeight: 600,
+                color: '#442f2a',
+                lineHeight: 1.05,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Featured{' '}
+              <span style={{ color: 'rgba(68,47,42,0.4)' }}>Projects</span>
+            </h2>
+            <p
+              className="md:max-w-xs text-sm leading-relaxed"
+              style={{ color: 'rgba(68,47,42,0.55)' }}
+            >
+              End-to-end systems spanning AI, full-stack, and data science — each solving a real problem.
+            </p>
+          </div>
         </motion.div>
 
-        {/* Cards grid */}
+        {/* Cards */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-7"
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {projects.map((project, i) => (
             <ProjectCard key={project.id} project={project} index={i} />
           ))}
+
+          {/* Future project placeholder */}
+          <motion.div
+            variants={staggerItem}
+            className="card-light flex flex-col items-center justify-center p-10 text-center min-h-[360px]"
+            style={{ borderRadius: 24, border: '1.5px dashed rgba(68,47,42,0.15)' }}
+          >
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5"
+              style={{ background: 'rgba(245,203,215,0.3)' }}
+            >
+              ✨
+            </div>
+            <p
+              className="font-semibold text-base mb-2"
+              style={{ color: 'rgba(68,47,42,0.5)' }}
+            >
+              Coming Soon
+            </p>
+            <p
+              className="text-xs leading-relaxed"
+              style={{ color: 'rgba(68,47,42,0.35)' }}
+            >
+              More exciting projects in the pipeline. Stay tuned!
+            </p>
+          </motion.div>
         </motion.div>
 
         {/* GitHub CTA */}
@@ -196,17 +283,17 @@ export default function Projects() {
           variants={fadeUp}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.4 }}
           className="text-center mt-14"
         >
           <a
             href="https://github.com/vaishnavi-shukla4"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline inline-flex"
+            className="btn-outline-dark inline-flex"
             id="view-all-github"
           >
-            <GithubIcon size={18} />
+            <GithubIcon size={16} />
             View all on GitHub
           </a>
         </motion.div>

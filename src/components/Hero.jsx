@@ -1,96 +1,62 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Mail } from 'lucide-react';
+import { ArrowDown, Download, Mail } from 'lucide-react';
 import GithubIcon from './icons/GithubIcon';
 import LinkedinIcon from './icons/LinkedinIcon';
-import { useTypewriter } from '../hooks/useTypewriter';
+import { personalInfo } from '../data/portfolioData';
 
 const ROLES = [
   'Software Engineer',
-  'ML Enthusiast',
+  'AI/ML Enthusiast',
   'Full-Stack Developer',
+  'Backend Developer',
   'Problem Solver',
 ];
 
 /**
- * Hero – Full-screen landing with canvas particle background,
- * typewriter role animation, and call-to-action buttons.
+ * Hero – two-column editorial layout with photo right, animated text left,
+ * floating decorative elements, and cursor interaction.
  */
 export default function Hero() {
-  const canvasRef = useRef(null);
-  const animRef = useRef(null);
-  const role = useTypewriter(ROLES, 75, 2000, 40);
+  const [roleIdx, setRoleIdx] = useState(0);
+  const [displayText, setDisplayText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: -300, y: -300 });
+  const heroRef = useRef(null);
 
-  /* ── Canvas Particle System ─────────────────────────────────────── */
+  // Typewriter effect
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let particles = [];
+    const currentRole = ROLES[roleIdx];
+    let timeout;
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
+    if (!isDeleting) {
+      if (displayText.length < currentRole.length) {
+        timeout = setTimeout(() => {
+          setDisplayText(currentRole.slice(0, displayText.length + 1));
+        }, 75);
+      } else {
+        timeout = setTimeout(() => setIsDeleting(true), 2200);
+      }
+    } else {
+      if (displayText.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayText(displayText.slice(0, -1));
+        }, 38);
+      } else {
+        setIsDeleting(false);
+        setRoleIdx((i) => (i + 1) % ROLES.length);
+      }
+    }
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, roleIdx]);
+
+  // Cursor glow tracking
+  useEffect(() => {
+    const handleMove = (e) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
     };
-
-    const initParticles = () => {
-      const count = Math.floor((canvas.width * canvas.height) / 12000);
-      particles = Array.from({ length: count }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 1.5 + 0.5,
-        alpha: Math.random() * 0.5 + 0.1,
-      }));
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach((p, i) => {
-        // Move
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        // Draw particle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(139, 92, 246, ${p.alpha})`;
-        ctx.fill();
-
-        // Draw connecting lines between close particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const q = particles[j];
-          const dx = p.x - q.x;
-          const dy = p.y - q.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            const opacity = (1 - dist / 120) * 0.15;
-            ctx.strokeStyle = `rgba(139, 92, 246, ${opacity})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
-          }
-        }
-      });
-
-      animRef.current = requestAnimationFrame(draw);
-    };
-
-    resize();
-    draw();
-    window.addEventListener('resize', resize);
-
-    return () => {
-      cancelAnimationFrame(animRef.current);
-      window.removeEventListener('resize', resize);
-    };
+    window.addEventListener('mousemove', handleMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMove);
   }, []);
 
   const scrollTo = (id) =>
@@ -99,139 +65,309 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-navy-950"
+      ref={heroRef}
+      className="relative min-h-screen flex items-center overflow-hidden"
+      style={{ background: '#fff7ec' }}
     >
-      {/* Particle canvas */}
-      <canvas ref={canvasRef} id="particles-canvas" aria-hidden="true" />
-
-      {/* Ambient glow orbs */}
+      {/* Cursor glow */}
       <div
-        className="glow-orb w-[500px] h-[500px] top-[-100px] left-[-100px] opacity-20"
-        style={{ background: 'radial-gradient(circle, #7c3aed, transparent 70%)' }}
-        aria-hidden="true"
-      />
-      <div
-        className="glow-orb w-[400px] h-[400px] bottom-[-80px] right-[-80px] opacity-15"
-        style={{ background: 'radial-gradient(circle, #06b6d4, transparent 70%)' }}
+        className="cursor-glow hidden lg:block"
+        style={{ left: cursorPos.x, top: cursorPos.y }}
         aria-hidden="true"
       />
 
-      {/* Main content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        {/* Eyebrow badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-400 text-sm font-medium mb-8"
-        >
-          <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse-slow" />
-          B.Tech CSE · Manipal University Jaipur
-        </motion.div>
+      {/* Decorative floating shapes */}
+      <motion.div
+        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-[12%] right-[8%] w-20 h-20 rounded-full opacity-40 pointer-events-none"
+        style={{ background: 'radial-gradient(circle, #f5cbd7, #fae4ec)' }}
+        aria-hidden="true"
+      />
+      <motion.div
+        animate={{ y: [0, 15, 0], rotate: [0, -8, 0] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        className="absolute bottom-[20%] right-[18%] w-12 h-12 rounded-full opacity-30 pointer-events-none"
+        style={{ background: '#f5cbd7' }}
+        aria-hidden="true"
+      />
+      <motion.div
+        animate={{ y: [0, -12, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="absolute top-[30%] left-[6%] w-8 h-8 rounded-full opacity-20 pointer-events-none"
+        style={{ background: '#442f2a' }}
+        aria-hidden="true"
+      />
+      {/* Decorative ring */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        className="absolute top-[8%] left-[15%] w-32 h-32 rounded-full pointer-events-none opacity-10"
+        style={{ border: '1px dashed #442f2a' }}
+        aria-hidden="true"
+      />
+      {/* Large blush blob bottom-left */}
+      <div
+        className="absolute bottom-[-10%] left-[-5%] w-80 h-80 rounded-full pointer-events-none opacity-20"
+        style={{ background: 'radial-gradient(circle, #f5cbd7, transparent 70%)' }}
+        aria-hidden="true"
+      />
 
-        {/* Name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="section-title text-white mb-4"
-          style={{ fontSize: 'clamp(2.8rem, 8vw, 5.5rem)' }}
-        >
-          Hi, I'm{' '}
-          <span className="gradient-text">Vaishnavi</span>
-        </motion.h1>
+      {/* Main layout */}
+      <div className="max-w-6xl mx-auto px-6 w-full py-28 lg:py-0">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-screen">
 
-        {/* Typewriter role */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="flex items-center justify-center gap-2 mb-6 text-xl md:text-2xl font-semibold text-slate-300"
-          style={{ minHeight: '2.4rem' }}
-        >
-          <span>{role}</span>
-          <span className="w-0.5 h-7 bg-violet-400 animate-pulse rounded-full" />
-        </motion.div>
-
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.45 }}
-          className="section-subtitle max-w-2xl mx-auto mb-10"
-        >
-          Building intelligent systems that solve real-world problems — from
-          LLM-powered platforms to computer vision pipelines.
-        </motion.p>
-
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.55 }}
-          className="flex flex-wrap items-center justify-center gap-4 mb-14"
-        >
-          <button
-            id="cta-view-projects"
-            className="btn-primary"
-            onClick={() => scrollTo('projects')}
-          >
-            <span>View Projects</span>
-            <span>→</span>
-          </button>
-          <button
-            id="cta-contact"
-            className="btn-outline"
-            onClick={() => scrollTo('contact')}
-          >
-            Contact Me
-          </button>
-        </motion.div>
-
-        {/* Social links */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="flex items-center justify-center gap-5"
-        >
-          {[
-            { icon: <GithubIcon size={20} />, href: 'https://github.com/vaishnavi-shukla4', label: 'GitHub' },
-            { icon: <LinkedinIcon size={20} />, href: 'https://www.linkedin.com/in/vaishnavi-shuklaa/', label: 'LinkedIn' },
-            { icon: <Mail size={20} />, href: 'mailto:vaishnavi@example.com', label: 'Email' },
-          ].map(({ icon, href, label }) => (
-            <motion.a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              whileHover={{ scale: 1.15, y: -3 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-3 rounded-xl border border-violet-500/20 text-slate-400 hover:text-violet-400 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all duration-200"
+          {/* ── Left: Content ─────────────────────────────────────── */}
+          <div className="flex flex-col justify-center">
+            {/* Eyebrow badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="inline-flex items-center gap-2.5 mb-7 self-start"
             >
-              {icon}
-            </motion.a>
-          ))}
-        </motion.div>
+              <span
+                className="w-2 h-2 rounded-full animate-pulse-slow"
+                style={{ background: '#442f2a' }}
+              />
+              <span className="section-label text-[#442f2a] opacity-60">
+                B.Tech CSE · Manipal University Jaipur · Class of 2027
+              </span>
+            </motion.div>
+
+            {/* Name */}
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="font-serif mb-3"
+              style={{
+                fontSize: 'clamp(3.2rem, 8vw, 6rem)',
+                fontWeight: 600,
+                lineHeight: 1.02,
+                color: '#442f2a',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Vaishnavi
+              <br />
+              <span style={{ color: '#442f2a', opacity: 0.85 }}>Shukla</span>
+            </motion.h1>
+
+            {/* Typewriter role */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
+              className="flex items-center gap-2 mb-6"
+              style={{ minHeight: '2rem' }}
+            >
+              <span
+                className="text-lg font-medium"
+                style={{ color: 'rgba(68,47,42,0.55)' }}
+              >
+                {displayText}
+              </span>
+              <span
+                className="w-0.5 h-5 animate-pulse rounded-full"
+                style={{ background: '#f5cbd7' }}
+              />
+            </motion.div>
+
+            {/* Tagline */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.55 }}
+              className="text-base leading-relaxed mb-10 max-w-lg"
+              style={{ color: 'rgba(68,47,42,0.65)' }}
+            >
+              4th-year Computer Science Engineering student passionate about
+              software engineering, AI-powered applications, scalable backend
+              systems, and building intuitive user experiences.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.65 }}
+              className="flex flex-wrap items-center gap-3 mb-10"
+            >
+              <a
+                href={personalInfo.resumeUrl}
+                id="cta-resume"
+                className="btn-noir"
+                aria-label="Download Resume"
+              >
+                <Download size={15} />
+                <span>Resume</span>
+              </a>
+              <button
+                id="cta-contact"
+                className="btn-outline-dark"
+                onClick={() => scrollTo('contact')}
+                aria-label="Go to contact section"
+              >
+                <Mail size={15} />
+                <span>Contact Me</span>
+              </button>
+            </motion.div>
+
+            {/* Social links */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="flex items-center gap-4"
+            >
+              {[
+                { icon: <GithubIcon size={18} />, href: personalInfo.github, label: 'GitHub' },
+                { icon: <LinkedinIcon size={18} />, href: personalInfo.linkedin, label: 'LinkedIn' },
+                { icon: <Mail size={18} />, href: `mailto:${personalInfo.email}`, label: 'Email' },
+              ].map(({ icon, href, label }) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  whileHover={{ scale: 1.12, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-2.5 rounded-xl transition-all duration-200"
+                  style={{
+                    color: 'rgba(68,47,42,0.5)',
+                    border: '1px solid rgba(68,47,42,0.12)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#442f2a';
+                    e.currentTarget.style.borderColor = 'rgba(68,47,42,0.3)';
+                    e.currentTarget.style.background = 'rgba(245,203,215,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = 'rgba(68,47,42,0.5)';
+                    e.currentTarget.style.borderColor = 'rgba(68,47,42,0.12)';
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  {icon}
+                </motion.a>
+              ))}
+              <div
+                className="h-4 w-px mx-1 opacity-20"
+                style={{ background: '#442f2a' }}
+              />
+              <span className="text-xs font-mono" style={{ color: 'rgba(68,47,42,0.4)' }}>
+                vaishnavishukla441@gmail.com
+              </span>
+            </motion.div>
+          </div>
+
+          {/* ── Right: Photo ───────────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-center justify-center lg:justify-end"
+          >
+            <div className="relative">
+              {/* Blush background blob */}
+              <div
+                className="absolute -inset-6 rounded-[40px] opacity-40 blur-2xl"
+                style={{ background: 'radial-gradient(circle, #f5cbd7, transparent 70%)' }}
+                aria-hidden="true"
+              />
+
+              {/* Floating ring decorations */}
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+                className="absolute -top-4 -right-4 w-20 h-20 rounded-full pointer-events-none"
+                style={{ border: '1px solid rgba(245,203,215,0.5)' }}
+                aria-hidden="true"
+              />
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+                className="absolute -bottom-4 -left-4 w-14 h-14 rounded-full pointer-events-none"
+                style={{ border: '1px dashed rgba(68,47,42,0.2)' }}
+                aria-hidden="true"
+              />
+
+              {/* Photo container */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative"
+              >
+                <div
+                  className="relative overflow-hidden"
+                  style={{
+                    width: 'clamp(280px, 35vw, 420px)',
+                    height: 'clamp(320px, 42vw, 500px)',
+                    borderRadius: '32px',
+                    boxShadow: '0 24px 80px rgba(68,47,42,0.18)',
+                  }}
+                >
+                  <img
+                    src="/profile.png"
+                    alt="Vaishnavi Shukla – profile photo"
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                  />
+                  {/* Subtle overlay gradient */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(to top, rgba(68,47,42,0.08) 0%, transparent 50%)',
+                    }}
+                  />
+                </div>
+
+                {/* Stats badges */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1.1, duration: 0.5 }}
+                  className="absolute -left-8 top-1/4 bg-white rounded-2xl px-4 py-3 shadow-medium"
+                  style={{ border: '1px solid rgba(68,47,42,0.06)' }}
+                >
+                  <p className="text-xl font-bold font-serif text-[#442f2a]">8.85</p>
+                  <p className="text-xs text-[rgba(68,47,42,0.5)] font-medium">CGPA</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1.3, duration: 0.5 }}
+                  className="absolute -right-8 bottom-1/4 bg-white rounded-2xl px-4 py-3 shadow-medium"
+                  style={{ border: '1px solid rgba(68,47,42,0.06)' }}
+                >
+                  <p className="text-xl font-bold font-serif text-[#442f2a]">600+</p>
+                  <p className="text-xs text-[rgba(68,47,42,0.5)] font-medium">DSA Problems</p>
+                </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
       {/* Scroll indicator */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
+        transition={{ delay: 1.5 }}
         onClick={() => scrollTo('about')}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 hover:text-violet-400 transition-colors group"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 group"
+        style={{ color: 'rgba(68,47,42,0.4)' }}
         aria-label="Scroll to about section"
       >
-        <span className="text-xs font-mono tracking-widest uppercase">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
-        >
-          <ArrowDown size={16} />
-        </motion.div>
+        <span className="section-label text-[10px]" style={{ letterSpacing: '0.25em' }}>
+          Explore
+        </span>
+        <div className="scroll-indicator">
+          <ArrowDown size={14} />
+        </div>
       </motion.button>
     </section>
   );

@@ -1,149 +1,162 @@
+import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import { skills } from '../data/portfolioData';
-import { fadeUp, staggerContainer, staggerItem } from '../utils/animations';
-
-/** Category color mapping for skill pills */
-const CATEGORY_COLORS = {
-  Languages: {
-    pill: 'bg-violet-500/10 border-violet-500/30 text-violet-300 hover:bg-violet-500/25 hover:border-violet-500/60 hover:shadow-[0_0_16px_rgba(139,92,246,0.35)]',
-    heading: 'text-violet-400',
-  },
-  Frameworks: {
-    pill: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 hover:border-cyan-500/60 hover:shadow-[0_0_16px_rgba(6,182,212,0.35)]',
-    heading: 'text-cyan-400',
-  },
-  Tools: {
-    pill: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 hover:border-emerald-500/60 hover:shadow-[0_0_16px_rgba(52,211,153,0.35)]',
-    heading: 'text-emerald-400',
-  },
-  'ML / AI': {
-    pill: 'bg-pink-500/10 border-pink-500/30 text-pink-300 hover:bg-pink-500/25 hover:border-pink-500/60 hover:shadow-[0_0_16px_rgba(244,114,182,0.35)]',
-    heading: 'text-pink-400',
-  },
-};
-
-/** Role highlight cards at the top of the section */
-const ROLE_CARDS = [
-  {
-    emoji: '💻',
-    title: 'Full-Stack Developer',
-    description:
-      'End-to-end application development with React, FastAPI, and modern databases.',
-    gradient: 'from-violet-600/20 to-cyan-600/20',
-    border: 'border-violet-500/20 hover:border-violet-500/50',
-    glow: 'hover:shadow-[0_8px_40px_rgba(124,58,237,0.2)]',
-  },
-  {
-    emoji: '🧠',
-    title: 'Problem Solver',
-    description:
-      'Strong DSA fundamentals with a focus on clean, efficient, and scalable solutions.',
-    gradient: 'from-cyan-600/20 to-emerald-600/20',
-    border: 'border-cyan-500/20 hover:border-cyan-500/50',
-    glow: 'hover:shadow-[0_8px_40px_rgba(6,182,212,0.2)]',
-  },
-  {
-    emoji: '🤖',
-    title: 'AI / ML Enthusiast',
-    description:
-      'Building intelligent systems with TensorFlow, NLP, computer vision, and LLM APIs.',
-    gradient: 'from-pink-600/20 to-violet-600/20',
-    border: 'border-pink-500/20 hover:border-pink-500/50',
-    glow: 'hover:shadow-[0_8px_40px_rgba(244,114,182,0.2)]',
-  },
-];
+import { skillCategories } from '../data/portfolioData';
+import { fadeUp, staggerContainer, fastStagger, fastStaggerItem } from '../utils/animations';
 
 /**
- * Skills – dedicated section showcasing role cards and categorized skill pills.
+ * Skills – dark section with categorized skill chips on noir background.
+ * Seven categories, each chip shows icon + name with blush hover.
  */
 export default function Skills() {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.06 });
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  const visibleCategories = activeCategory
+    ? skillCategories.filter((c) => c.id === activeCategory)
+    : skillCategories;
 
   return (
-    <section id="skills" className="py-28 relative overflow-hidden">
-      {/* Background accents */}
+    <section
+      id="skills"
+      className="relative py-28 md:py-36 overflow-hidden"
+      style={{ background: '#070d0d' }}
+    >
+      {/* Decorative glow */}
       <div
-        className="glow-orb w-[400px] h-[400px] left-[-120px] top-1/4 opacity-10"
-        style={{ background: 'radial-gradient(circle, #06b6d4, transparent 70%)' }}
-        aria-hidden="true"
-      />
-      <div
-        className="glow-orb w-[300px] h-[300px] right-[-80px] bottom-1/4 opacity-10"
-        style={{ background: 'radial-gradient(circle, #7c3aed, transparent 70%)' }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none opacity-5"
+        style={{ background: 'radial-gradient(circle, #f5cbd7, transparent 65%)' }}
         aria-hidden="true"
       />
 
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Section heading */}
+      <div className="max-w-6xl mx-auto px-6" ref={ref}>
+        {/* Heading */}
         <motion.div
-          ref={ref}
           variants={fadeUp}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="text-center mb-16"
+          className="mb-16"
         >
-          <p className="font-mono text-violet-400 text-sm tracking-widest uppercase mb-3">
+          <p
+            className="section-label mb-3"
+            style={{ color: 'rgba(245,203,215,0.4)' }}
+          >
             What I work with
           </p>
-          <h2 className="section-title text-white">
-            My Skill <span className="gradient-text">Set</span>
+          <h2
+            className="font-serif"
+            style={{
+              fontSize: 'clamp(2.8rem, 6vw, 5rem)',
+              fontWeight: 600,
+              color: '#fff7ec',
+              lineHeight: 1.05,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            Skills &{' '}
+            <span style={{ color: 'rgba(255,247,236,0.35)' }}>Tools</span>
           </h2>
         </motion.div>
 
-        {/* ── Role Cards ──────────────────────────────────────────── */}
+        {/* Category filter tabs */}
         <motion.div
-          variants={staggerContainer}
+          variants={fadeUp}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20"
+          transition={{ delay: 0.1 }}
+          className="flex flex-wrap gap-2 mb-14"
         >
-          {ROLE_CARDS.map(({ emoji, title, description, gradient, border, glow }) => (
-            <motion.div
-              key={title}
-              variants={staggerItem}
-              whileHover={{ y: -6, scale: 1.02 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-              className={`glass-card p-6 bg-gradient-to-br ${gradient} ${border} ${glow} transition-all duration-300 cursor-default`}
+          <button
+            onClick={() => setActiveCategory(null)}
+            className="px-4 py-2 rounded-full text-xs font-medium transition-all duration-200"
+            style={{
+              background: activeCategory === null ? 'rgba(245,203,215,0.18)' : 'rgba(245,203,215,0.06)',
+              border: `1px solid ${activeCategory === null ? 'rgba(245,203,215,0.4)' : 'rgba(245,203,215,0.12)'}`,
+              color: activeCategory === null ? '#fff7ec' : 'rgba(255,247,236,0.5)',
+            }}
+          >
+            All
+          </button>
+          {skillCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
+              className="px-4 py-2 rounded-full text-xs font-medium transition-all duration-200"
+              style={{
+                background: activeCategory === cat.id ? 'rgba(245,203,215,0.18)' : 'rgba(245,203,215,0.04)',
+                border: `1px solid ${activeCategory === cat.id ? 'rgba(245,203,215,0.4)' : 'rgba(245,203,215,0.1)'}`,
+                color: activeCategory === cat.id ? '#fff7ec' : 'rgba(255,247,236,0.45)',
+              }}
             >
-              <span className="text-3xl mb-4 block">{emoji}</span>
-              <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">{description}</p>
-            </motion.div>
+              {cat.label}
+            </button>
           ))}
         </motion.div>
 
-        {/* ── Skill Categories with Pill Tags ─────────────────────── */}
+        {/* Skill categories */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           className="space-y-12"
         >
-          {Object.entries(skills).map(([category, items]) => {
-            const colors = CATEGORY_COLORS[category];
-            return (
-              <motion.div key={category} variants={staggerItem}>
-                <h4
-                  className={`font-mono text-sm tracking-widest uppercase mb-5 ${colors.heading}`}
+          {visibleCategories.map((category) => (
+            <motion.div
+              key={category.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5 }}
+              layout
+            >
+              {/* Category header */}
+              <div className="flex items-center gap-3 mb-5">
+                <span
+                  className="text-base"
+                  style={{ color: 'rgba(245,203,215,0.6)' }}
+                  aria-hidden="true"
                 >
-                  {category}
-                </h4>
-                <div className="flex flex-wrap gap-3">
-                  {items.map((skill) => (
-                    <motion.span
-                      key={skill.name}
-                      whileHover={{ y: -3, scale: 1.05 }}
-                      whileTap={{ scale: 0.97 }}
-                      className={`inline-flex items-center px-4 py-2 rounded-full border text-sm font-medium cursor-default transition-all duration-250 ${colors.pill}`}
+                  {category.icon}
+                </span>
+                <h3
+                  className="section-label"
+                  style={{ color: 'rgba(245,203,215,0.5)' }}
+                >
+                  {category.label}
+                </h3>
+                <div
+                  className="flex-1 h-px"
+                  style={{ background: 'rgba(245,203,215,0.08)' }}
+                />
+              </div>
+
+              {/* Skill chips */}
+              <motion.div
+                variants={fastStagger}
+                initial="hidden"
+                animate={inView ? 'visible' : 'hidden'}
+                className="flex flex-wrap gap-3"
+              >
+                {category.skills.map((skill) => (
+                  <motion.div
+                    key={skill.name}
+                    variants={fastStaggerItem}
+                    whileHover={{ y: -4, scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="skill-chip skill-chip-dark group"
+                  >
+                    <span
+                      className="text-base flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
+                      role="img"
+                      aria-hidden="true"
                     >
-                      {skill.name}
-                    </motion.span>
-                  ))}
-                </div>
+                      {skill.icon}
+                    </span>
+                    <span className="font-medium">{skill.name}</span>
+                  </motion.div>
+                ))}
               </motion.div>
-            );
-          })}
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>

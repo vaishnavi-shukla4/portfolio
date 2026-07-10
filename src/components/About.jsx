@@ -1,178 +1,178 @@
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import { Download } from 'lucide-react';
-import GithubIcon from './icons/GithubIcon';
-import { fadeUp } from '../utils/animations';
+import { Code2, Cpu, Lightbulb, Rocket, BookOpen, Heart } from 'lucide-react';
+import { fadeUp, staggerContainer, staggerItem } from '../utils/animations';
+
+const ABOUT_CARDS = [
+  {
+    icon: <Heart size={20} />,
+    title: 'Who I Am',
+    content:
+      'A passionate Computer Science Engineering undergraduate at Manipal University Jaipur, driven by curiosity and a love for building things that matter. I thrive at the intersection of elegance and functionality.',
+    accent: '#f5cbd7',
+  },
+  {
+    icon: <Code2 size={20} />,
+    title: 'What I Build',
+    content:
+      'End-to-end full-stack applications, AI-powered platforms with LLM and RAG pipelines, scalable backend systems with FastAPI and async task queues, and intuitive user experiences with React.',
+    accent: '#f5cbd7',
+  },
+  {
+    icon: <Cpu size={20} />,
+    title: 'Areas of Interest',
+    content:
+      'Artificial Intelligence & Machine Learning, Natural Language Processing, Scalable Backend Systems, Computer Vision, and building developer tools that improve engineering workflows.',
+    accent: '#f5cbd7',
+  },
+  {
+    icon: <BookOpen size={20} />,
+    title: 'Currently Learning',
+    content:
+      'Advanced system design patterns, distributed systems, cloud-native architectures on AWS, and deepening my expertise in RAG (Retrieval-Augmented Generation) pipelines and vector databases.',
+    accent: '#f5cbd7',
+  },
+  {
+    icon: <Lightbulb size={20} />,
+    title: 'What Drives Me',
+    content:
+      'Clean code, thoughtful architecture, and the satisfaction of solving real problems at scale. I love bridging the gap between cutting-edge ML research and production-ready engineering.',
+    accent: '#f5cbd7',
+  },
+  {
+    icon: <Rocket size={20} />,
+    title: 'Career Aspirations',
+    content:
+      'Seeking software engineering internships and full-time roles where I can contribute to impactful products, collaborate with world-class teams, and grow into a well-rounded engineer.',
+    accent: '#f5cbd7',
+  },
+];
+
+const STAT_ITEMS = [
+  { value: '8.85', label: 'CGPA' },
+  { value: '600+', label: 'DSA Problems' },
+  { value: '3+', label: 'Projects Built' },
+  { value: 'Top 2.23%', label: 'Amazon ML School' },
+];
 
 /**
- * About – clean personal intro section.
- * Left: profile photo | Right: profile card, bio, stats.
+ * About – editorial card grid with personal narrative and stats strip.
  */
 export default function About() {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.08 });
 
   return (
-    <section id="about" className="py-28 relative overflow-hidden">
-      {/* background accent */}
+    <section
+      id="about"
+      className="relative py-28 md:py-36 overflow-hidden"
+      style={{ background: '#fff7ec' }}
+    >
+      {/* Decorative blush blob top-right */}
       <div
-        className="glow-orb w-[350px] h-[350px] right-[-100px] top-1/2 -translate-y-1/2 opacity-10"
-        style={{ background: 'radial-gradient(circle, #7c3aed, transparent 70%)' }}
+        className="absolute top-[-10%] right-[-5%] w-80 h-80 rounded-full pointer-events-none opacity-25"
+        style={{ background: 'radial-gradient(circle, #f5cbd7, transparent 70%)' }}
         aria-hidden="true"
       />
 
       <div className="max-w-6xl mx-auto px-6">
-        {/* Section heading + top-right links */}
+        {/* Section heading */}
         <motion.div
           ref={ref}
           variants={fadeUp}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="mb-16"
+          className="mb-16 md:mb-20"
         >
-          {/* Top row: heading centered, links top-right */}
-          <div className="relative">
-            {/* Links: GitHub + Resume */}
-            <div className="flex items-center gap-3 justify-center md:justify-end mb-6 md:absolute md:right-0 md:top-0">
-              <a
-                href="https://github.com/vaishnavi-shukla4"
-                target="_blank"
-                rel="noopener noreferrer"
-                id="about-github-link"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-violet-500/30 text-violet-400 text-sm font-medium hover:bg-violet-500/10 hover:border-violet-500/60 transition-all duration-200"
-              >
-                <GithubIcon size={16} />
-                GitHub ↗
-              </a>
-              <a
-                href="/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                download
-                id="about-resume-btn"
-                className="btn-primary !py-2 !px-5 !text-sm"
-              >
-                <span className="flex items-center gap-2">
-                  <Download size={16} />
-                  Resume
-                </span>
-              </a>
-            </div>
-
-            {/* Centered heading */}
-            <div className="text-center">
-              <p className="font-mono text-violet-400 text-sm tracking-widest uppercase mb-3">
-                Get to know me
-              </p>
-              <h2 className="section-title text-white">
-                About <span className="gradient-text">Me</span>
-              </h2>
-            </div>
-          </div>
+          <p
+            className="section-label mb-3"
+            style={{ color: 'rgba(68,47,42,0.45)' }}
+          >
+            Get to know me
+          </p>
+          <h2
+            className="font-serif"
+            style={{
+              fontSize: 'clamp(2.8rem, 6vw, 5rem)',
+              fontWeight: 600,
+              color: '#442f2a',
+              lineHeight: 1.05,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            About <span style={{ color: 'rgba(68,47,42,0.4)' }}>Me</span>
+          </h2>
         </motion.div>
 
-        {/* Two-column layout: Photo left | Info right */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* ── Left: Profile Photo ──────────────────────────────── */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-            transition={{ delay: 0.1 }}
-            className="flex justify-center"
-          >
-            <div className="relative group">
-              {/* Gradient ring behind photo */}
-              <div className="absolute -inset-1 bg-gradient-to-br from-violet-600 via-cyan-500 to-violet-600 rounded-2xl opacity-60 blur-sm group-hover:opacity-80 transition-opacity duration-500" />
-              <div className="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-[340px] lg:h-[340px] rounded-2xl overflow-hidden border-2 border-violet-500/30">
-                <img
-                  src="/profile.png"
-                  alt="Vaishnavi Shukla – profile photo"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-              {/* Decorative dots */}
+        {/* Cards grid */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-20"
+        >
+          {ABOUT_CARDS.map(({ icon, title, content }) => (
+            <motion.div
+              key={title}
+              variants={staggerItem}
+              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+              className="card-light p-7 group cursor-default"
+            >
+              {/* Icon */}
               <div
-                className="absolute -bottom-4 -right-4 w-24 h-24 opacity-20"
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110"
                 style={{
-                  backgroundImage:
-                    'radial-gradient(circle, #a78bfa 1.5px, transparent 1.5px)',
-                  backgroundSize: '12px 12px',
+                  background: 'rgba(245,203,215,0.35)',
+                  color: '#442f2a',
                 }}
-                aria-hidden="true"
-              />
-            </div>
-          </motion.div>
-
-          {/* ── Right: Profile Info + Bio + Stats ─────────────────── */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-            transition={{ delay: 0.25 }}
-          >
-            {/* Profile card */}
-            <div className="flex items-center gap-5 mb-8">
-              <div className="relative flex-shrink-0">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-xl font-bold text-white shadow-glow-violet">
-                  VS
-                </div>
-                {/* Online dot */}
-                <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-navy-950" />
+              >
+                {icon}
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Vaishnavi Shukla</h3>
-                <p className="text-slate-400 text-sm">
-                  B.Tech CSE · Manipal University Jaipur
-                </p>
-                <p className="font-mono text-violet-400 text-sm mt-0.5">CGPA: 8.84</p>
-              </div>
-            </div>
+              <h3
+                className="font-semibold text-base mb-3"
+                style={{ color: '#442f2a' }}
+              >
+                {title}
+              </h3>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: 'rgba(68,47,42,0.62)' }}
+              >
+                {content}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
 
-            {/* Bio paragraphs — broken into smaller chunks for breathing room */}
-            <div className="space-y-5 text-slate-300 leading-relaxed mb-10">
-              <p>
-                I'm a Computer Science student passionate about building
-                intelligent systems that bridge the gap between cutting-edge
-                research and real-world impact.
+        {/* Stats strip */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          transition={{ delay: 0.3 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl"
+          style={{ background: 'rgba(68,47,42,0.08)' }}
+        >
+          {STAT_ITEMS.map(({ value, label }, i) => (
+            <div
+              key={label}
+              className="flex flex-col items-center justify-center py-8 px-4 text-center"
+              style={{ background: '#fff7ec' }}
+            >
+              <p
+                className="font-serif font-semibold mb-1"
+                style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', color: '#442f2a' }}
+              >
+                {value}
               </p>
-              <p>
-                I love the intersection of{' '}
-                <span className="text-violet-400 font-medium">machine learning</span>{' '}
-                and{' '}
-                <span className="text-cyan-400 font-medium">
-                  full-stack development
-                </span>
-                — from LLM-powered resume tools to computer vision plant-health apps.
-              </p>
-              <p>
-                I've built end-to-end systems using Python, FastAPI, React, and
-                modern ML stacks. I'm driven by clean architecture, async
-                performance, and thoughtful UX.
-              </p>
-              <p className="text-slate-400 italic">
-                Currently seeking opportunities where I can push the boundaries
-                of AI-powered product development.
+              <p
+                className="text-xs font-medium"
+                style={{ color: 'rgba(68,47,42,0.45)', letterSpacing: '0.05em' }}
+              >
+                {label}
               </p>
             </div>
-
-            {/* Stat chips */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { label: 'CGPA', value: '8.84' },
-                { label: 'Projects', value: '3+' },
-                { label: 'Stack', value: 'Full' },
-              ].map(({ label, value }) => (
-                <div key={label} className="glass-card p-4 text-center">
-                  <p className="text-2xl font-bold gradient-text">{value}</p>
-                  <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider">
-                    {label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
