@@ -60,11 +60,11 @@ export default function App() {
         </Suspense>
 
         <Suspense fallback={<div className="py-32" style={{ background: '#070d0d' }} />}>
-          <Education />
+          <CodingProfiles />
         </Suspense>
 
-        <Suspense fallback={<SectionSkeleton />}>
-          <CodingProfiles />
+        <Suspense fallback={<div className="py-32" style={{ background: '#070d0d' }} />}>
+          <Education />
         </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>

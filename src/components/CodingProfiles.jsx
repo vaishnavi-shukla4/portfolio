@@ -23,8 +23,7 @@ function LeetCodeLogo({ size = 24 }) {
 }
 
 /**
- * CodingProfiles – cream section showcasing coding/problem-solving profiles.
- * Currently features LeetCode. Extensible for future platforms.
+ * CodingProfiles – dark section showcasing coding/problem-solving profiles.
  */
 export default function CodingProfiles() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.08 });
@@ -32,28 +31,28 @@ export default function CodingProfiles() {
   return (
     <section
       id="coding"
-      className="relative py-28 md:py-36 overflow-hidden"
-      style={{ background: '#fff7ec' }}
+      className="relative pt-28 md:pt-36 overflow-hidden"
+      style={{ background: '#070d0d' }}
     >
       {/* Decorative blush blob */}
       <div
-        className="absolute top-[-8%] left-[-6%] w-80 h-80 rounded-full pointer-events-none opacity-20"
-        style={{ background: 'radial-gradient(circle, #f5cbd7, transparent 70%)' }}
+        className="absolute top-[-10%] right-[-5%] w-96 h-96 rounded-full pointer-events-none opacity-5"
+        style={{ background: 'radial-gradient(circle, #f5cbd7, transparent 65%)' }}
         aria-hidden="true"
       />
 
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-6 pb-12">
         {/* Section heading */}
         <motion.div
           ref={ref}
           variants={fadeUp}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
-          className="mb-16 md:mb-20"
+          className="mb-12 md:mb-16"
         >
           <p
             className="section-label mb-3"
-            style={{ color: 'rgba(68,47,42,0.45)' }}
+            style={{ color: 'rgba(245,203,215,0.4)' }}
           >
             Problem solving
           </p>
@@ -63,17 +62,17 @@ export default function CodingProfiles() {
               style={{
                 fontSize: 'clamp(2.8rem, 6vw, 5rem)',
                 fontWeight: 600,
-                color: '#442f2a',
+                color: '#fff7ec',
                 lineHeight: 1.05,
                 letterSpacing: '-0.01em',
               }}
             >
               Coding{' '}
-              <span style={{ color: 'rgba(68,47,42,0.4)' }}>Profiles</span>
+              <span style={{ color: 'rgba(255,247,236,0.35)' }}>Profiles</span>
             </h2>
             <p
               className="md:max-w-xs text-sm leading-relaxed"
-              style={{ color: 'rgba(68,47,42,0.55)' }}
+              style={{ color: 'rgba(255,247,236,0.55)' }}
             >
               Consistent practice in data structures, algorithms, and competitive thinking.
             </p>
@@ -91,7 +90,7 @@ export default function CodingProfiles() {
           <motion.div
             variants={staggerItem}
             whileHover={{ y: -8, transition: { duration: 0.3 } }}
-            className="card-light w-full max-w-lg overflow-hidden group"
+            className="card-dark w-full max-w-lg overflow-hidden group"
             style={{ borderRadius: 24 }}
           >
             {/* Card header — LeetCode branded */}
@@ -143,20 +142,20 @@ export default function CodingProfiles() {
               <div className="flex items-center gap-3">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'rgba(245,203,215,0.3)', color: '#442f2a' }}
+                  style={{ background: 'rgba(245,203,215,0.1)', border: '1px solid rgba(245,203,215,0.2)', color: '#f5cbd7' }}
                 >
                   <LeetCodeLogo size={18} />
                 </div>
                 <div className="min-w-0">
                   <p
                     className="font-semibold text-sm"
-                    style={{ color: '#442f2a' }}
+                    style={{ color: '#fff7ec' }}
                   >
                     {LEETCODE_USERNAME}
                   </p>
                   <p
                     className="text-xs font-mono"
-                    style={{ color: 'rgba(68,47,42,0.45)' }}
+                    style={{ color: 'rgba(255,247,236,0.5)' }}
                   >
                     leetcode.com
                   </p>
@@ -170,7 +169,7 @@ export default function CodingProfiles() {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="btn-noir w-full"
+                className="btn-outline-light w-full"
                 id="leetcode-profile-link"
                 style={{ fontSize: '0.85rem' }}
               >
