@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle, AlertCircle, MapPin } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import GithubIcon from './icons/GithubIcon';
 import LinkedinIcon from './icons/LinkedinIcon';
 import { personalInfo } from '../data/portfolioData';
@@ -43,6 +44,7 @@ function ContactForm() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState(null);
+  const resetTimer = useRef(null);
 
   const validate = () => {
     const e = {};
@@ -69,9 +71,31 @@ function ContactForm() {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setStatus('sending');
-    await new Promise((r) => setTimeout(r, 1500));
-    setStatus('success');
-    setForm({ name: '', email: '', subject: '', message: '' });
+
+    // Clear any pending reset timer
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: form.name,
+          from_email: form.email,
+          subject: form.subject,
+          message: form.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+      setStatus('success');
+      setForm({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      setStatus('error');
+    }
+
+    // Auto-reset status after 5 seconds so the form is reusable
+    resetTimer.current = setTimeout(() => setStatus(null), 5000);
   };
 
   const inputBase = `form-input`;
@@ -152,11 +176,11 @@ function ContactForm() {
       <motion.button
         id="contact-submit"
         type="submit"
-        disabled={status === 'sending' || status === 'success'}
+        disabled={status === 'sending'}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.97 }}
         className="btn-noir w-full"
-        style={{ opacity: status === 'sending' || status === 'success' ? 0.75 : 1 }}
+        style={{ opacity: status === 'sending' ? 0.75 : 1 }}
       >
         {status === 'sending' ? (
           <>
@@ -172,6 +196,11 @@ function ContactForm() {
           <>
             <CheckCircle size={16} />
             Message Sent!
+          </>
+        ) : status === 'error' ? (
+          <>
+            <AlertCircle size={16} />
+            Failed — Try Again
           </>
         ) : (
           <>
@@ -190,6 +219,18 @@ function ContactForm() {
         >
           <CheckCircle size={14} />
           Thanks! I'll get back to you within 24 hours.
+        </motion.p>
+      )}
+
+      {status === 'error' && (
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center text-sm flex items-center justify-center gap-1.5"
+          style={{ color: '#dc3c3c' }}
+        >
+          <AlertCircle size={14} />
+          Something went wrong. Please try again or email me directly.
         </motion.p>
       )}
     </form>

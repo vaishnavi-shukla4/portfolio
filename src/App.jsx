@@ -9,6 +9,7 @@ const About     = lazy(() => import('./components/About'));
 const Skills    = lazy(() => import('./components/Skills'));
 const Projects  = lazy(() => import('./components/Projects'));
 const Education = lazy(() => import('./components/Education'));
+const CodingProfiles = lazy(() => import('./components/CodingProfiles'));
 const Contact   = lazy(() => import('./components/Contact'));
 
 /** Section skeleton – minimal spinner for lazy-load fallback */
@@ -60,6 +61,10 @@ export default function App() {
 
         <Suspense fallback={<div className="py-32" style={{ background: '#070d0d' }} />}>
           <Education />
+        </Suspense>
+
+        <Suspense fallback={<SectionSkeleton />}>
+          <CodingProfiles />
         </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>
