@@ -7,7 +7,7 @@ export const projects = [
     description:
       'Built a full-stack platform for ATS score simulation and semantic resume–job description matching using vector embeddings. Developed async resume analysis pipelines using Celery, Redis, and spaCy with LLM-powered rewriting via Groq. Integrated SerpAPI to scrape live job listings and rank them against user resumes.',
     tech: ['React (TypeScript)', 'Python', 'FastAPI', 'PostgreSQL+pgvector', 'Redis', 'Celery', 'Groq (LLaMA 3.3 70B)', 'spaCy', 'Docker', 'Tailwind CSS', 'SerpAPI'],
-    github: 'https://github.com/vaishnavi-shukla4',
+    github: 'https://github.com/vaishnavi-shukla4/JobFit-AI',
     live: null,
     gradient: 'from-[#442f2a] to-[#6b4c45]',
     accentColor: '#f5cbd7',
@@ -21,7 +21,7 @@ export const projects = [
     description:
       'Built a full-stack AI research agent enabling cross-document Q&A, contradiction detection, and trend analysis across multiple PDFs using LLaMA 3.3 70B (Groq) and Gemini embeddings with citation tracking. Engineered a custom in-memory RAG pipeline with NumPy cosine similarity search over 1536-dim Gemini embeddings, eliminating external vector DB dependencies.',
     tech: ['React', 'FastAPI', 'Groq (LLaMA 3.3 70B)', 'Gemini Embeddings', 'NumPy', 'PyPDF2', 'Vercel', 'Render'],
-    github: 'https://github.com/vaishnavi-shukla4',
+    github: 'https://github.com/vaishnavi-shukla4/multi-document-research-agent',
     live: null,
     gradient: 'from-[#2d1f1b] to-[#442f2a]',
     accentColor: '#f5cbd7',
@@ -35,7 +35,7 @@ export const projects = [
     description:
       'Led frontend development in a team project, building a full-stack smart gardening web application integrating a CNN-based plant disease detection model with a Flask REST API for real-time inference and recommendation generation. Engineered a multi-modal Hybrid Risk Score system combining CNN predictions and Open-Meteo weather data, improving disease risk estimation accuracy.',
     tech: ['React (TypeScript)', 'Tailwind CSS', 'Python', 'Flask', 'REST API', 'TensorFlow', 'Open-Meteo API', 'Vercel'],
-    github: 'https://github.com/vaishnavi-shukla4',
+    github: 'https://github.com/varunswami1/alpha4',
     live: null,
     gradient: 'from-[#1a2626] to-[#0f1a1a]',
     accentColor: '#f5cbd7',
